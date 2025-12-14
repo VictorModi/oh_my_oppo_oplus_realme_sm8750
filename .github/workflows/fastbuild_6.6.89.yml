@@ -233,19 +233,13 @@ jobs:
             # 删除完整版本定义
             sed -i '/KSU_VERSION_FULL :=/d' kernel/Kbuild
             # 在 REPO_OWNER 行后插入新版本定义
-            VERSION_DEFINITIONS="KSU_VERSION_FULL := \"${KSU_VERSION_FULL}\""
-            awk -v def="$VERSION_DEFINITIONS" '
-              /REPO_OWNER :=/ {
-                print
-                print def
-                inserted = 1
-                next
-              }
-              { print }
-              END {
-                if (!inserted)
-                  print def
-              }
+            awk -v def="\"$VERSION_DEFINITIONS\"" '
+              # 当找到 REPO_OWNER 行时，插入版本定义并设置标记
+              /REPO_OWNER :=/ {print; print def; inserted=1; next}
+              # 打印所有行
+              1
+              # 如果未找到插入点，在文件末尾追加
+              END {if (!inserted) print def}
             ' kernel/Kbuild > kernel/Kbuild.tmp && mv kernel/Kbuild.tmp kernel/Kbuild
             # 生成自定义版本号（基于提交计数）, 失败时使用 114514
             KSU_VERSION=$(expr $(git rev-list --count main) + 37185 2>/dev/null || echo 114514)
