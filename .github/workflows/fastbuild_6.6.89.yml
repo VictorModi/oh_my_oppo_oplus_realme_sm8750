@@ -91,6 +91,11 @@ on:
         required: false
         type: string
         default: 'SukiSU-Ultra/SukiSU-Ultra'
+      fix_zwsp_enable:
+          description: '内核层面修复ZWSP漏洞 (实验性)'
+          required: true
+          type: boolean
+          default: 'false'
 
 jobs:
   build:
@@ -593,6 +598,15 @@ jobs:
           cd common
           patch -p1 -F 3 < "../$PATCH_FILE"
           grep -q '^CONFIG_HYMOFS=y$' arch/arm64/configs/gki_defconfig || echo 'CONFIG_HYMOFS=y' >> arch/arm64/configs/gki_defconfig
+
+      - name: 应用 Fix-ZWSP 补丁
+        if: inputs.fix_zwsp_enable
+        run: |
+          echo "正在添加 Fix-ZWSP 补丁…"
+          cd kernel_workspace
+          wget https://raw.githubusercontent.com/VictorModi/oppo_oplus_realme_sm8750/refs/heads/main/other_patch/fix-zero-width-space.patch
+          cd common
+          patch -p1 < ../fix-zero-width-space.patch
 
           
       - name: 添加制作名称
