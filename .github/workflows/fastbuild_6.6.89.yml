@@ -618,9 +618,11 @@ jobs:
         run: |
           echo "正在添加 Fix-ZWSP 补丁…"
           cd kernel_workspace
-          wget https://raw.githubusercontent.com/VictorModi/oppo_oplus_realme_sm8750/refs/heads/main/other_patch/fix-zero-width-space.patch
+          wget https://github.com/torvalds/linux/commit/91b587ba79e1b68bb718d12b0758dbcdab4e9cb7.patch -O f2fs.patch
+          wget https://raw.githubusercontent.com/VictorModi/oppo_oplus_realme_sm8750/refs/heads/main/other_patch/remove_ignore_init.patch
           cd common
-          patch -p1 < ../fix-zero-width-space.patch
+          patch -p1 < ../f2fs.patch
+          patch -p1 < ../remove_ignore_init.patch
 
           
       - name: 添加制作名称
