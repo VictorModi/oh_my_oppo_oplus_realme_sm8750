@@ -623,6 +623,7 @@ jobs:
           cd common
           git diff
           # patch -p1 < ../f2fs.patch
+          grep use_hash fs/f2fs/dir.c
           patch -p1 < ../remove_ignore_init.patch
 
           
