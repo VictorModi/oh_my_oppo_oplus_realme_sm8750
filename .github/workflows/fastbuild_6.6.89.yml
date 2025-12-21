@@ -561,7 +561,7 @@ jobs:
           echo "CONFIG_REKERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
 
       - name: 启用内核级基带保护
-        if: inputs.baseband_guard != "false"
+        if: inputs.baseband_guard != 'false'
         run: |
           echo "正在启用启用内核级基带保护支持…"
           cd kernel_workspace
