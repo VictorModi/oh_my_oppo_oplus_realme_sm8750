@@ -66,8 +66,13 @@ on:
       baseband_guard:
         description: '是否开启内核级基带保护(阻止一切对非用户分区的写入，有效防止格机)'
         required: true
-        type: boolean
+        type: choice
         default: 'true'
+        options:
+          - 'false'
+          - 'true'
+          - 'EACCES'
+          - 'random_deny'
       sukisu_branch:
         description: '所使用的SukiSu Builtin分支'
         required: true
@@ -556,7 +561,7 @@ jobs:
           echo "CONFIG_REKERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
 
       - name: 启用内核级基带保护
-        if: inputs.baseband_guard
+        if: inputs.baseband_guard != "false"
         run: |
           echo "正在启用启用内核级基带保护支持…"
           cd kernel_workspace
@@ -586,6 +591,16 @@ jobs:
           sed -i 's/selinuxfs.o //g' "./selinux/Makefile"
           sed -i 's/hooks.o //g' "./selinux/Makefile"
           cat "./baseband-guard/sepatch.txt" >> "./selinux/Makefile"
+          BG_FILE="baseband-guard/baseband_guard.c"
+          if [ "${{ github.event.inputs.baseband_guard }}" = "EACCES" ]; then
+            echo "模式设定：固定返回 EACCES"
+            sed -i 's/EPERM/EACCES/g' $BG_FILE
+          elif [ "${{ github.event.inputs.baseband_guard }}" = "random_deny" ]; then
+            sed -i '1i #include <linux/random.h>' $BG_FILE
+            sed -i 's/EPERM/({ int r = (prandom_u32() % 34) + 1; bb_pr_rl("chaos_deny: -%d\\n", r); r; })/g' $BG_FILE
+          else
+            echo "模式设定：保持默认 EPERM"
+          fi
 
       - name: HymoFS 补丁
         if: inputs.hymofs
