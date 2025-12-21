@@ -633,21 +633,6 @@ jobs:
           md5sum -c README.utf8data
           echo "=============="
           sha1sum -c README.utf8data
-          echo "=============="
-          echo "开始生成 utf8data "
-          echo "=============="
-          cd ../..
-          # make ARCH=arm64 olddefconfig
-          touch .config
-          make REGENERATE_UTF8DATA=1 fs/unicode/
-          rm -rf .config
-          echo "=============="
-          echo "生成完成大抵上是 "
-          echo "=============="
-          cd fs/unicode
-          echo "对比 shipped 版本"
-          diff -q utf8data.c_shipped utf8data.c || echo "::warning::utf8data.c differs"
-          diff -q utf8data.h_shipped utf8data.h || echo "::warning::utf8data.h differs"
 
           
       - name: 添加制作名称
@@ -726,7 +711,17 @@ jobs:
           echo "--- 编译前环境时间: $(LD_PRELOAD=$PRELOAD_LIBS date) ---"
           echo "--- 编译前环境文件时间戳: ---"
           LD_PRELOAD=$PRELOAD_LIBS stat ./Makefile
-          
+          if [[ ${{ github.event.inputs.fix_zwsp_enable }} == "true" ]]; then
+              echo "=============="
+              echo "开始生成 utf8data "
+              echo "=============="
+              make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error gki_defconfig
+              make REGENERATE_UTF8DATA=1 fs/unicode/
+              mv .config .config.bak
+              echo "=============="
+              echo "生成完成大抵上是 "
+              echo "=============="
+          fi
           #在构建内核的同时清除不必要的.NET, Android NDK, Haskell, CodeQL运行库，清理空间且不阻塞后续步骤运行
           sudo rm -rf /usr/share/dotnet &
           sudo rm -rf /usr/local/lib/android &
