@@ -715,7 +715,7 @@ jobs:
               echo "=============="
               echo "开始生成 utf8data "
               echo "=============="
-              make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 KCFLAGS+=-Wno-error gki_defconfig
+              make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld KCFLAGS+=-O2 KCFLAGS+=-Wno-error gki_defconfig
               make REGENERATE_UTF8DATA=1 fs/unicode/
               mv .config .config.bak
               echo "=============="
