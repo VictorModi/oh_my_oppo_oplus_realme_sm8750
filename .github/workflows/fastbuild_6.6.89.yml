@@ -77,7 +77,7 @@ on:
         description: '所使用的SukiSu Builtin分支'
         required: true
         type: choice
-        default: 'builtin'
+        default: 'tmp-builtin'
         options:
           - 'builtin'
           - 'tmp-builtin'
@@ -593,14 +593,14 @@ jobs:
           cat "./baseband-guard/sepatch.txt" >> "./selinux/Makefile"
           BG_FILE="baseband-guard/baseband_guard.c"
           if [ "${{ github.event.inputs.baseband_guard }}" = "EACCES" ]; then
-            echo "模式设定：固定返回 EACCES"
+            echo "Mode: EACCES"
             sed -i 's/EPERM/EACCES/g' $BG_FILE
           elif [ "${{ github.event.inputs.baseband_guard }}" = "random_deny" ]; then
             sed -i '1i #include <linux/random.h>' $BG_FILE
             sed -i 's|EPERM|({ u32 r; u32 banned[]={47,48,49,58,59,72,73,78,93,94,97,98,99,100,101,102,103}; int ok; do{ r=(get_random_u32()%139)+1; ok=1; for(int i=0;i<sizeof(banned)/sizeof(banned[0]);i++){ if(r==banned[i]){ok=0;break;} } }while(!ok); r; })|g' "$BG_FILE"
-            echo "模式设定：随机返回错误"
+            echo "Mode: Random"
           else
-            echo "模式设定：保持默认 EPERM"
+            echo "Mode: EPERM"
           fi
 
       - name: HymoFS 补丁
@@ -809,12 +809,6 @@ jobs:
           fi
           zip -r ../AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_VERSION }}_A15_${{ env.KERNEL_NAME }}.zip ./*
 
-      - name: 上传 Ccache 调试日志
-        uses: actions/upload-artifact@v4
-        with:
-          name: ccache-debug-log
-          path: ${{ github.workspace }}/kernel_workspace/ccache.log
-
       - name: 上传 ZIP 工件
         uses: actions/upload-artifact@v4
         with:
@@ -880,7 +874,7 @@ jobs:
             - Re-Kernel支持：${{ github.event.inputs.rekernel_enable }}
             - 内核级基带保护支持：${{ github.event.inputs.baseband_guard }}
             - HymoFS支持: ${{ github.event.inputs.hymofs }}
-            - ZWSP Path Fix: ${{ github.event.inputs.fix_zwsp_enable }}
+            - ZWSP Bypass Fix: ${{ github.event.inputs.fix_zwsp_enable }}
             - SukiSU Ultra管理器下载：[SukiSU-Ultra](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases)
             - KernelSU Next管理器下载：[KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next/releases)
             - MKSU管理器下载：[Magic-KernelSU](https://github.com/5ec1cff/KernelSU/actions)
