@@ -635,15 +635,15 @@ jobs:
       - name: 应用 Fix-ZWSP-Bypass 补丁
         if: inputs.fix_zwsp_bypass_enable
         run: |
+          set -euo pipefail
           echo "正在添加 Fix-ZWSP-Bypass 补丁…"
           cd kernel_workspace
-          # wget https://github.com/torvalds/linux/commit/91b587ba79e1b68bb718d12b0758dbcdab4e9cb7.patch -O f2fs.patch
+          wget https://github.com/torvalds/linux/commit/91b587ba79e1b68bb718d12b0758dbcdab4e9cb7.patch -O f2fs.patch
           wget https://raw.githubusercontent.com/VictorModi/oppo_oplus_realme_sm8750/refs/heads/main/other_patch/remove_ignore_init.patch
           cd common
-          # patch -p1 < ../f2fs.patch
-          grep use_hash fs/f2fs/dir.c
+          patch -p1 -N < ../f2fs.patch
           patch -p1 < ../remove_ignore_init.patch
-          echo "重新编译 utf8data.c_shipped ..."
+          echo "修补相关Patch完成"
           cd fs/unicode
           sed -n '
           /^Individual source links:/,/^md5sums/ {
@@ -655,11 +655,12 @@ jobs:
           echo "=============="
           sha1sum -c README.utf8data
           echo "=============="
-          echo "开始生成 utf8data "
+          echo "开始编译 mkutf8data "
           echo "=============="
           gcc -o mkutf8data mkutf8data.c
           echo "=============="
-          echo "生成完成大抵上是 "
+          echo "成功编译 mkutf8data"
+          echo "即将使用 mkutf8data 生成 utf8data.c"
           echo "=============="
           ./mkutf8data \
             -a DerivedAge.txt \
@@ -879,7 +880,7 @@ jobs:
             - Re-Kernel支持：${{ github.event.inputs.rekernel_enable }}
             - 内核级基带保护支持：${{ github.event.inputs.baseband_guard }}
             - HymoFS支持: ${{ github.event.inputs.hymofs }}
-            - ZWSP Bypass Fix: ${{ github.event.inputs.fix_zwsp_enable }}
+            - ZWSP Bypass Fix: ${{ github.event.inputs.fix_zwsp_bypass_enable }}
             - SukiSU Ultra管理器下载：[SukiSU-Ultra](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases)
             - KernelSU Next管理器下载：[KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next/releases)
             - MKSU管理器下载：[Magic-KernelSU](https://github.com/5ec1cff/KernelSU/actions)
