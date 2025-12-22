@@ -202,7 +202,7 @@ jobs:
           fi
 
       - name: 添加 ${{ github.event.inputs.ksu_type }} (${{ inputs.sukisu_branch }})${{ inputs.kernelsu_author }}
-        if: ${{ github.event.inputs.ksu_type }} != 'none'
+        if: inputs.ksu_type != "none"
         id: ksu_version
         run: |
           # 进入内核工作目录
@@ -300,7 +300,7 @@ jobs:
           fi
 
       - name: 应用 KernelSU & SUSFS 补丁
-        if: inputs.susfs_enable && ${{ github.event.inputs.ksu_type }} != "none"
+        if: inputs.susfs_enable && inputs.ksu_type != "none"
         run: |
           cd kernel_workspace
           git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
@@ -421,7 +421,7 @@ jobs:
           patch -p1 -F 3 < lz4kd.patch || true
           
       - name: 添加SUSFS 配置项
-        if: inputs.susfs_enable
+        if: inputs.susfs_enable && inputs.ksu_type != "none"
         run: |
           cd kernel_workspace
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -607,7 +607,7 @@ jobs:
           fi
 
       - name: HymoFS 补丁
-        if: inputs.hymofs && ${{ github.event.inputs.ksu_type }} != "none"
+        if: inputs.hymofs && inputs.ksu_type != "none"
         run: |
           set -e
           echo "Applying HymoFS patch..."
