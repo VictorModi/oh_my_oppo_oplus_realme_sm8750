@@ -7,7 +7,7 @@ This repository is a personal fork of the [original repository](https://github.c
 So far, I have only added a handful of features:
 
 - **ZWSP Bypass Fix**: Fixed zero-width space issues based on `utf8data`.  
-  [Source](https://t.me/c/2668077020/59)
+  [Source](https://t.me/newqianzhuang/52?comment=59)
 
 - **HymoFS Support**: Integrated [HymoFS](https://github.com/Anatdx/HymoFS/) for custom filesystem handling.
 
@@ -15,6 +15,8 @@ So far, I have only added a handful of features:
   [More Info](https://github.com/cctv18/Baseband-guard/)
 
 - **KernelSU Handling**: No arbitrary KernelSU compilation included — keep it clean and simple.
+
+- **Modifiable SukiSU repository link** – to prevent a certain developer from breaking SukiSU, or to make it easier to switch to ReSukiSU.
 
 ---
 
