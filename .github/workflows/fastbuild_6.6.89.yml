@@ -772,6 +772,7 @@ jobs:
               KCFLAGS+=-Wno-default-const-init-var-unsafe gki_defconfig &&
           echo "-------- 当前 .config 开始 --------" &&
           cat out/.config &&
+          cp out/.config . &&
           echo "-------- 当前 .config 结束 --------" &&
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
               CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out \
