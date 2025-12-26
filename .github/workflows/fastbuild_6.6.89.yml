@@ -150,7 +150,7 @@ jobs:
           echo "正在克隆llvm-clang工具链..." &&
           mkdir -p clang &&
           aria2c -s16 -x16 -k1M https://github.com/cctv18/oneplus_sm8650_toolchain/releases/download/LLVM-Clang18-r510928/clang-r510928.zip -o clang.zip &&
-          unzip -q clang.zip -d clang18 &&
+          unzip -q clang.zip -d clang &&
           rm -rf clang.zip &
           
           echo "正在克隆构建工具..." &&
@@ -786,9 +786,9 @@ jobs:
           sudo rm -rf /usr/local/lib/android &
           sudo rm -rf /opt/ghc &
           sudo rm -rf /opt/hostedtoolcache/CodeQL &
-          export KBUILD_BUILD_USER=kleaf &&
-          export KBUILD_BUILD_HOST=build-host &&
-          export KBUILD_BUILD_TIMESTAMP="{{ github.event.inputs.build_time }}" &&
+          export KBUILD_BUILD_USER=kleaf
+          export KBUILD_BUILD_HOST=build-host
+          export KBUILD_BUILD_TIMESTAMP="{{ github.event.inputs.build_time }}"
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
               CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 \
               KCFLAGS+=-Wno-error KCFLAGS+=-Wno-default-const-init-field-unsafe \
