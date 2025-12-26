@@ -791,15 +791,13 @@ jobs:
           export KBUILD_BUILD_TIMESTAMP="{{ github.event.inputs.build_time }}"
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
               CC="ccache clang" LD="ld.lld" HOSTLD=ld.lld O=out KCFLAGS+=-O2 \
-              KCFLAGS+=-Wno-error KCFLAGS+=-Wno-default-const-init-field-unsafe \
-              KCFLAGS+=-Wno-default-const-init-var-unsafe gki_defconfig &&
+              KCFLAGS+=-Wno-error gki_defconfig &&
           echo "-------- 当前 .config 开始 --------" &&
           cat out/.config &&
           echo "-------- 当前 .config 结束 --------" &&
           make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
               CC="$(pwd)/cc-wrapper" LD="$(pwd)/ld-wrapper" HOSTLD=ld.lld O=out \
-              KCFLAGS+=-O2 KCFLAGS+=-Wno-error KCFLAGS+=-Wno-default-const-init-field-unsafe \
-              KCFLAGS+=-Wno-default-const-init-var-unsafe Image
+              KCFLAGS+=-O2 KCFLAGS+=-Wno-error Image
           
           # 编译后时间劫持二次校验
           echo "--- 编译后环境时间: $(LD_PRELOAD=$PRELOAD_LIBS date) ---"
